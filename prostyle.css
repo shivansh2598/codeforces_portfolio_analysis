@@ -1,0 +1,25 @@
+#bt1{
+    width: 400px;
+    font-size: 20px;
+    margin-top:20px;
+    
+}
+#main
+{
+    visibility: hidden;
+}
+
+#button{
+    width: 150px;
+    font-size: 15px;
+}
+
+#see
+{
+    visibility: hidden;
+}
+
+body
+{
+    background-color: #E0FFFF;
+}

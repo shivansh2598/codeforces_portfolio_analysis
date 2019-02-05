@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>AnalyzeIt</title>
+  
+
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js">
+  </script>
+  <script src = "https://code.highcharts.com/highcharts.js"></script>  
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <!-- <link src="rating_chart.css" rel="stylesheet" type="text/css"> -->
+<link href="style.css" rel="stylesheet" type="text/css">
+	
+	
+ <script> 
+        $(function(){
+          $("#includedContent").load("./b.htm #container "); 
+        });
+  </script>
+</head>
+<body>
+
+
+
+    <center>
+    <h1>Welcome to codeforces portfolio analyzer!!!</h1>
+    <h3>Enter your user handle</h3>
+    </center>
+
+    <input type="text" name="fname" id="user_name" placeholder="user_name" size="50">
+    <button id="button">search</button>
+    <br>
+    <center>
+    <a href="./profilecompare.htm" class="btn btn-danger">Click here to compare users </a>
+    <center>
+    <center>
+            <div id="includedContent" style="height:auto"></div>    
+             <div id="display_area"></div>
+    </center>
+    
+    <center>
+        <div id="containerpie" style="margin-bottom:200px; width:1200px;"></div>
+    </center>
+
+    <center>
+        <div id="containerzz" style="margin-bottom:200px; width:1200px;"></div>
+    </center>
+
+
+     <center>
+        <div id = "container11" style = "width: 1200px; height: auto; margin: 0 auto"></div>
+
+     </center>
+    
+      <center>
+        <div id="containerzz1" style="margin-top:200px; width:1200px;">
+      </center>
+
+     <!-- js code starts here -->
+    <script type="text/javascript">
+
+
+
+        //object formation
+        var button=document.getElementById("button");
+        var display_area=document.getElementById("display_area");
+        var user_handle=document.getElementById("user_name");
+        var input = document.getElementById("user_name");
+        var user_handle1;
+
+
+
+
+        //function with axios call
+        var info=function(x){   
+        user_handle1=x;
+
+    
+        axios.get(`https://codeforces.com/api/user.info?handles=${user_handle1}`,{
+    }).then(function (response) {   //here response is the object that has json  
+    
+        user_handle.value="";
+        display_area.innerText="";
+        
+        
+        var img= document.createElement('img');
+        img.setAttribute("src",`http:`+`${response.data.result[0].titlePhoto}`);
+        display_area.appendChild(img);
+        var div_inside=document.createElement("div");
+        var h1=document.createElement("h1");
+        h1.innerText=`Name: ${response.data.result[0].firstName} ${response.data.result[0].lastName}`;
+        display_area.appendChild(h1);
+        var h21=document.createElement("h2");
+        h21.innerText=`Country: ${response.data.result[0].country}`;
+        var h22=document.createElement("h2");
+        h22.innerText=`City: ${response.data.result[0].city}`;
+        var h23=document.createElement("h2");
+        h23.innerText=`rating: ${response.data.result[0].rating}`;
+        var h24=document.createElement("h2");
+        h24.innerText=`Handle: ${response.data.result[0].handle}`;
+        var h25=document.createElement("h2");
+        h25.innerText=`Organization: ${response.data.result[0].organization}`;
+        var h26=document.createElement("h2");
+        h26.innerText=`Rank: ${response.data.result[0].rank}`;
+        var h27=document.createElement("h2");
+        h27.innerText=`MaxRating: ${response.data.result[0].maxRating}`;
+        display_area.appendChild(h21);
+        display_area.appendChild(h22);
+        display_area.appendChild(h23);
+        display_area.appendChild(h24);
+        display_area.appendChild(h25);
+        display_area.appendChild(h26);
+        display_area.appendChild(h27);
+        display_area.setAttribute("padding-top",'20px');
+        display_area.setAttribute("padding-bottom",'20px');
+
+        
+
+
+        //scrolling effect
+        $('html, body').animate({
+            'scrollTop' : $("#display_area").position().top
+        });
+
+        //function call
+        piechart();
+         rating();
+         happy();
+         tagwise();
+
+        })
+        .catch(function (error) {
+           display_area.innerHTML="<h1>oopps no such user found!!!</h1><h1>try again!!</h1>";
+           user_handle.value="";
+        })
+    }
+
+
+
+
+    //function for happy hour
+   var happy= function() {  
+        var array=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+        var arrlen;
+        axios.get(`https://codeforces.com/api/user.status?handle=${user_handle1}&from=1&count=10000`)
+        .then(function (response) {   //here response is the object that has json 
+        
+          arrlen=response.data.result.length;
+          
+          for(let i=0;i<arrlen;i++)
+          {
+          var event2 = new Date();
+          event2.setTime(response.data.result[i].creationTimeSeconds*1000);
+          array[event2.getHours()]++;
+          }
+
+          var datasets11=[{
+            name:"Questions solved",
+            data:array
+        }]
+
+
+        var chart = {
+           type: 'column'
+        };
+        var title = {
+           text: 'Happy Coding Hours'   
+        };
+        var subtitle = {
+           text: 'Source: Codeforces.com'  
+        };
+        var xAxis = {
+            title:{
+                text:"Hours in std form from 00-24"
+            },
+           categories: ['00-01','01-02','02-03','03-04','04-05','05-06','06-07',
+              '07-08','08-09','09-10','10-11','11-12','12-13','13-14','14-15','15-16','16-17','17-18','18-19','19-20','20-21','21-22','22-23','23-24'],
+           crosshair: true
+        };
+        var yAxis= {
+            title: {
+                text: 'No of questions'
+            }
+        };
+        var tooltip = {
+           headerFormat: '<span style = "font-size:10px">{point.key}</span><table>',
+           pointFormat: '<tr><td style = "color:{series.color};padding:0">{series.name}: </td>' +
+              '<td style = "padding:0"><b>{point.y:.1f} question</b></td></tr>',
+           footerFormat: '</table>',
+           shared: true,
+           useHTML: true
+        };
+        var plotOptions = {
+           column: {
+              pointPadding: 0.2,
+              borderWidth: 0,
+              pointStart:0,
+           }
+        };  
+        var credits = {
+           enabled: false
+        };
+        
+     ;     
+  
+     var json = {};   
+     json.chart = chart; 
+     json.title = title;   
+     json.subtitle = subtitle; 
+     json.tooltip = tooltip;
+     json.xAxis = xAxis;
+     json.yAxis = yAxis;  
+     json.series = datasets11;
+     json.plotOptions = plotOptions;  
+     json.credits = credits;
+     $('#container11').highcharts(json);
+
+    
+    
+
+  })
+        .catch(function (error) {
+          console.log(error);
+        })
+
+    }
+
+   
+
+    //function for user rating
+    var rating=function()
+    {
+        axios.get(`https://codeforces.com/api/user.rating?handle=${user_handle1}`)
+        .then(function (response) {   //here response is the object that has json 
+           var arrlength=response.data.result.length;
+            var datearray=[];
+            var ratingarray=[];
+            for(var i=0;i<arrlength;i++)
+            {
+            var event2 = new Date();
+              event2.setTime(response.data.result[i].ratingUpdateTimeSeconds*1000);
+            datearray.push(event2);
+            var new_rating=response.data.result[i].newRating;
+            ratingarray.push(new_rating);
+            }
+            for(let i=0;i<arrlength;i++)
+            {
+                datearray.push(datearray[i]);
+            }
+          
+            Highcharts.chart('containerzz', {
+
+                title: {
+                    text: 'User Rating'
+                },
+            
+                subtitle: {
+                    text: 'Source: Codeforces api'
+                },
+            
+                
+                yAxis: {
+                    title: {
+                        text: 'Rating'
+                    }
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle'
+                },
+
+                xAxis:{
+                    categories:datearray,
+                },
+            
+                plotOptions: {
+                    title:"contest id",
+                    series: {
+                        pointStart: 1,
+                    }
+                },
+            
+                series: [{
+                    name: 'contest-rating',
+                    data: ratingarray,
+                },
+                ],
+            
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
+                }
+            
+            });
+
+
+        
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+    }
+
+
+
+
+    //tagwise question solved
+
+
+     var tagwise=function()
+     {
+        var datasets=[{name:"Program Tags",
+        data:[]}];
+var min_index=0;
+var problem_series=[{"name":"implementation",
+       "size":0,
+       "correct":0},
+       {"name":"dp",
+       "size":0,
+       "correct":0},
+       {"name":"math",
+       "size":0,
+       "correct":0},
+       {"name":"greedy",
+       "size":0,
+       "correct":0},
+       {"name":"brute force",
+       "size":0,
+       "correct":0},
+       {"name":"data structures",
+       "size":0,
+       "correct":0},
+       {"name":"constructive algorithms",
+       "size":0,
+       "correct":0},
+       {"name":"dfs and similar",
+       "size":0,
+       "correct":0},
+       {"name":"sortings",
+       "size":0,
+       "correct":0},
+       {"name":"number theory",
+       "size":0,
+       "correct":0},
+       {"name":"graphs",
+       "size":0,
+       "correct":0},
+       {"name":"trees",
+       "size":0,
+       "correct":0},
+       {"name":"strings",
+       "size":0,
+       "correct":0},
+       {"name":"geometry",
+       "size":0,
+       "correct":0},
+      ];
+  var weak_tag='',temp1;
+  axios.get(`https://codeforces.com/api/user.status?handle=${user_handle1}`).then(
+  (response)=>{
+      calculate_correctness(response);
+      //suggestion_practice();
+  }).catch(
+  (error)=>{
+      console.log(error);
+  });
+  var json = {};
+
+
+  function calculate_correctness(response){
+      var i,k,max=0,min=100,maxi=0,mini=0;
+      for(i=0;i<response.data.result.length;i++)
+      {
+          var alltags=response.data.result[i].problem.tags;
+          for(j=0;j<alltags.length;j++)
+          {
+              for(k=0;k<14;k++)
+              {
+                  if(problem_series[k].name==alltags[j])
+                  {
+                      problem_series[k].size=problem_series[k].size+1;
+                      if(response.data.result[i].verdict=="OK")
+                          problem_series[k].correct=problem_series[k].correct+1;
+                  }
+              }
+          }
+      }
+      for(i=0;i<14;i++)
+          {
+              var val=parseInt((parseInt(problem_series[i].correct)*100)/parseInt(problem_series[i].size));
+              datasets[0].data.push(val);
+              if(min>val)
+              {
+                  min=val;
+                  mini=i;
+              }
+              if(max<val)
+              {
+                  max=val;
+                  maxi=i;
+              }
+          }
+      temp1=problem_series[mini].name;
+      for(var i=0;i<temp1.length;i++)
+      {
+          if(temp1[i]==' ')
+              weak_tag+='+';
+          else
+              weak_tag+=temp1[i];
+      }
+      $(document).ready(function() {  
+      var chart = {
+         type: 'bar'
+      };
+      var title = {
+         text: 'Problem Tags vs Accuracy'   
+      };
+      var subtitle = {
+         text: 'Source: codeforces'  
+      };
+      var xAxis = {
+         categories: ['implementation','dp','math','greedy','brute force','data structures','constructive algorithms','dfs and similar','sortings','number theory','graphs','trees','strings','geometry'],
+         title: {
+            text: null
+         }
+      };
+      var yAxis = {
+         max:100,
+         title: {
+            text: 'Accuracy %',
+            align: 'high'
+         },
+         labels: {
+            overflow: 'justify'
+         }
+      };
+      var tooltip = {
+         valueSuffix: '%'
+      };
+      var plotOptions = {
+         bar: {
+            dataLabels: {
+               enabled: true
+            }
+         }
+      };
+      var legend = {
+         layout: 'vertical',
+         align: 'right',
+         verticalAlign: 'top',
+         x: -40,
+         y: 100,
+         floating: true,
+         borderWidth: 1,
+         
+         backgroundColor: (
+            (Highcharts.theme && Highcharts.theme.legendBackgroundColor) ||
+               '#D3D3D3'),
+         shadow: true
+      };
+      var credits = {
+         enabled: false
+      };
+      var json = {};   
+      json.chart = chart; 
+      json.title = title;   
+      json.subtitle = subtitle; 
+      json.tooltip = tooltip;
+      json.xAxis = xAxis;
+      json.yAxis = yAxis;  
+      json.series = datasets;
+      json.plotOptions = plotOptions;
+      json.credits = credits;
+      $('#containerzz1').highcharts(json);
+   });
+  }
+     }
+
+
+
+//piechart function
+
+     var piechart=function()
+     {
+var c=0;
+		var d=0;
+		var e=0,a=0;
+		var f=0,g=0,h=0;
+		var l=0;
+		var k=0;
+	
+		
+		axios.get(`https://codeforces.com/api/user.status?handle=${user_handle1}`)
+		.then(function(response){
+			var i;
+			var o=response.data;
+			l=o.result.length;
+	for(i=0;i<o.result.length;i++)
+	{
+		if(o.result[i].verdict=="OK")
+		{
+			c++;
+			continue;
+		}
+		if(o.result[i].verdict=="WRONG_ANSWER")
+		{
+			d++;
+			continue;
+		}
+		if(o.result[i].verdict=="TIME_LIMIT_EXCEEDED")
+		{
+			e++;
+			continue;
+		}
+		if(o.result[i].verdict=="RUNTIME_ERROR")
+		{
+			f++;
+			continue;
+		}
+		if(o.result[i].verdict=="SKIPPED")
+		{
+			g++;
+			continue;
+		}
+		if(o.result[i].verdict=="MEMORY_LIMIT_EXCEEDED")
+		{
+			h++;
+			continue;
+		}
+		if(o.result[i].verdict=="COMPILATION_ERROR")
+		{
+			k++;
+		}
+		else{
+			a++;
+		}
+
+	}
+	c=(c/l)*100;
+	d=(d/l)*100;
+	e=(e/l)*100;
+	f=(f/l)*100;
+	g=(g/l)*100;
+	h=(h/l)*100;
+	a=(a/l)*100;
+	k=(k/l)*100;
+	Highcharts.chart('containerpie', {
+chart: {
+	plotBackgroundColor: null,
+	plotBorderWidth: null,
+	plotShadow: false,
+	type: 'pie'
+},
+title: {
+	text: 'SUBMISSION STATUS'
+},
+tooltip: {
+	pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+},
+plotOptions: {
+	pie: {
+		allowPointSelect: true,
+		cursor: 'pointer',
+		dataLabels: {
+			enabled: true,
+			format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+			style: {
+				color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+			}
+		}
+	}
+},
+series: [{
+	name: 'SUBMISSIONS',
+	colorByPoint: true,
+	data: [{
+		name: 'TIME_LIMIT_EXCEEDED',
+		y: e,
+		sliced: true,
+		selected: true
+	}, {
+		name: 'SKIPPED',
+		y: g
+	}, {
+		name: 'MEMORY_LIMIT_EXCEEDED',
+		y: h
+	}, {
+		name: 'WRONG_ANSWER',
+		y: d
+	},
+	{
+		name: 'RUNTIME_ERROR',
+		y: f
+	},
+	{
+		name: 'OTHERS',
+		y: a
+	},
+	{
+		name: 'OK',
+		y: c
+	
+	},
+	{
+		name:'COMPILATION_ERROR',
+		y: k
+	}]
+}]
+});		
+})
+.catch(function(err){
+		console.log(err);
+	})
+     }
+
+
+
+   
+   
+    
+    //event handeler for enter key
+    input.addEventListener("keyup", function(event) {
+        event.preventDefault();
+        if(event.keyCode===13)
+        {
+            info(user_handle.value);
+        }
+    })
+
+    //event handler for click on button
+    button.addEventListener("click",function(event){
+        info(user_handle.value);
+    });
+    
+
+
+    </script>
+    <center>
+    <footer class="footer">
+        <p>Copyright :- For details contact 8797206513 </p>
+    </footer>
+    </center>
+</body>
+</html>

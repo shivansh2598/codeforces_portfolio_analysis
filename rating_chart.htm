@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link src="rating_chart.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+        <div id="containerzz"></div>
+    <script type="text/javascript">
+        axios.get(' http://codeforces.com/api/user.rating?handle=Radewoosh')
+        .then(function (response) {   //here response is the object that has json 
+            console.log(JSON.stringify(response));
+           var arrlength=response.data.result.length;
+            var datearray=[];
+            var ratingarray=[];
+            for(var i=0;i<arrlength;i++)
+            {
+            var event2 = new Date();
+              event2.setTime(response.data.result[i].ratingUpdateTimeSeconds*1000);
+            datearray.push(event2);
+            var new_rating=response.data.result[i].newRating;
+            ratingarray.push(new_rating);
+            }
+            for(let i=0;i<arrlength;i++)
+            {
+                datearray.push(datearray[i]);
+            }
+          
+            Highcharts.chart('containerzz', {
+
+                title: {
+                    text: 'User Rating'
+                },
+            
+                subtitle: {
+                    text: 'Source: Codeforces api'
+                },
+            
+                
+                yAxis: {
+                    title: {
+                        text: 'Rating'
+                    }
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle'
+                },
+
+                xAxis:{
+                    categories:datearray,
+                },
+            
+                plotOptions: {
+                    title:"contest id",
+                    series: {
+                        pointStart: 1,
+                    }
+                },
+            
+                series: [{
+                    name: 'contest-rating',
+                    data: ratingarray,
+                },
+                ],
+            
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
+                }
+            
+            });
+
+
+        
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        
+     
+
+    </script>
+</body>
+</html>

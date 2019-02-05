@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<script src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js">
+      </script>
+      <script src="https://code.highcharts.com/highcharts.js"></script>
+      <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<title>
+Graph
+</title>
+</head>
+<body>
+<div id="containerzz1">
+</div>
+<!-- <div id="p_1" style="padding:20px" align="center"></p></div> -->
+<script type="text/javascript">
+var datasets=[{name:"Program Tags",
+			  data:[]}];
+var min_index=0;
+var problem_series=[{"name":"implementation",
+			 "size":0,
+			 "correct":0},
+			 {"name":"dp",
+			 "size":0,
+			 "correct":0},
+			 {"name":"math",
+			 "size":0,
+			 "correct":0},
+			 {"name":"greedy",
+			 "size":0,
+			 "correct":0},
+			 {"name":"brute force",
+			 "size":0,
+			 "correct":0},
+			 {"name":"data structures",
+			 "size":0,
+			 "correct":0},
+			 {"name":"constructive algorithms",
+			 "size":0,
+			 "correct":0},
+			 {"name":"dfs and similar",
+			 "size":0,
+			 "correct":0},
+			 {"name":"sortings",
+			 "size":0,
+			 "correct":0},
+			 {"name":"number theory",
+			 "size":0,
+			 "correct":0},
+			 {"name":"graphs",
+			 "size":0,
+			 "correct":0},
+			 {"name":"trees",
+			 "size":0,
+			 "correct":0},
+			 {"name":"strings",
+			 "size":0,
+			 "correct":0},
+			 {"name":"geometry",
+			 "size":0,
+			 "correct":0},
+			];
+		var weak_tag='',temp1;
+		axios.get('http://codeforces.com/api/user.status?handle=Radewoosh').then(
+		(response)=>{
+			calculate_correctness(response);
+			suggestion_practice();
+		}).catch(
+		(error)=>{
+			console.log(error);
+		});
+		var json = {};
+
+
+		function calculate_correctness(response){
+			var i,k,max=0,min=100,maxi=0,mini=0;
+			for(i=0;i<response.data.result.length;i++)
+			{
+				var alltags=response.data.result[i].problem.tags;
+				for(j=0;j<alltags.length;j++)
+				{
+					for(k=0;k<14;k++)
+					{
+						if(problem_series[k].name==alltags[j])
+						{
+							problem_series[k].size=problem_series[k].size+1;
+							if(response.data.result[i].verdict=="OK")
+								problem_series[k].correct=problem_series[k].correct+1;
+						}
+					}
+				}
+			}
+			for(i=0;i<14;i++)
+				{
+					var val=parseInt((parseInt(problem_series[i].correct)*100)/parseInt(problem_series[i].size));
+					datasets[0].data.push(val);
+					if(min>val)
+					{
+						min=val;
+						mini=i;
+					}
+					if(max<val)
+					{
+						max=val;
+						maxi=i;
+					}
+				}
+			temp1=problem_series[mini].name;
+			for(var i=0;i<temp1.length;i++)
+			{
+				if(temp1[i]==' ')
+					weak_tag+='+';
+				else
+					weak_tag+=temp1[i];
+			}
+			$(document).ready(function() {  
+            var chart = {
+               type: 'bar'
+            };
+            var title = {
+               text: 'Problem Tags vs Accuracy'   
+            };
+            var subtitle = {
+               text: 'Source: codeforces'  
+            };
+            var xAxis = {
+               categories: ['implementation','dp','math','greedy','brute force','data structures','constructive algorithms','dfs and similar','sortings','number theory','graphs','trees','strings','geometry'],
+               title: {
+                  text: null
+               }
+            };
+            var yAxis = {
+               min: 0,
+               title: {
+                  text: 'Accuracy %',
+                  align: 'high'
+               },
+               labels: {
+                  overflow: 'justify'
+               }
+            };
+            var tooltip = {
+               valueSuffix: '%'
+            };
+            var plotOptions = {
+               bar: {
+                  dataLabels: {
+                     enabled: true
+                  }
+               }
+            };
+            var legend = {
+               layout: 'vertical',
+               align: 'right',
+               verticalAlign: 'top',
+               x: -40,
+               y: 100,
+               floating: true,
+               borderWidth: 1,
+               
+               backgroundColor: (
+                  (Highcharts.theme && Highcharts.theme.legendBackgroundColor) ||
+                     '#D3D3D3'),
+               shadow: true
+            };
+            var credits = {
+               enabled: false
+            };
+            var json = {};   
+            json.chart = chart; 
+            json.title = title;   
+            json.subtitle = subtitle; 
+            json.tooltip = tooltip;
+            json.xAxis = xAxis;
+            json.yAxis = yAxis;  
+            json.series = datasets;
+            json.plotOptions = plotOptions;
+            json.credits = credits;
+            $('#containerzz1').highcharts(json);
+         });
+		}
+		/* function suggestion_practice(){
+			var ele=document.createElement("P");
+			ele.style.width="200px";
+			ele.style.padding="30px";
+			ele.style.backgroundColor="grey";
+			var ele1=document.createElement("SPAN");
+			var data_text=document.createTextNode("SUGGEST ME SOME CODES");
+			ele1.appendChild(data_text);
+			ele.appendChild(ele1);
+			console.log(this.weak_tag);
+			ele.addEventListener('click',()=>{
+				window.location.href="http://codeforces.com/problemset?order=BY_SOLVED_DESC&tags="+this.weak_tag;
+			})
+			document.getElementById("p_1").appendChild(ele);
+		}; */
+</script>
+</body>
+</html>

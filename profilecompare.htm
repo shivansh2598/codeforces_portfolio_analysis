@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Profile Comparison</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- <link href="style.css" rel="stylesheet" type="text/css"> -->
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <script src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js">
+  </script>
+  <script src = "https://code.highcharts.com/highcharts.js"></script>  
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <link href="prostyle.css" rel="stylesheet" type="text/css">
+</head>
+
+
+<body>
+    <div>
+        <center>
+            <div> 
+            
+            <h3>One can grow only when they can compare their progress with others.<br> So here we povide the option for users to compare themselves<br>
+                with other users to know their actuall overall progress!!
+            </h3>
+            </div>
+        <button type="button" id="bt1" class="btn btn-danger">Compare with others!!</button>
+
+</center>
+    <div id="see">
+        <center>
+        <h2 style="margin-bottom:30px">Enter user handle of both users</h2>
+        </center>
+    </div>
+    </div>
+        <div id="main" class="container-fluid">
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-4">
+                    <label>Enter first user handle</label>
+                        <input id="u1" style="text-align:center" type="text" size="50px">
+                        <center>
+                <div id="user1">
+                </div>
+                <div id="pie1"></div>
+                </center>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-4">
+                        <label>Enter second user handle</label>
+                        <input id="u2" style="text-align:center" type="text" size="50px">
+                        <center>
+                    <div id="user2">
+                    </div>
+                    <div id="pie2"></div>
+                </center>
+
+                </div>
+                <div class="col-md-1">
+                    <center>
+                        <button type="button" id="button" class="btn btn-success">Enter</button>
+                        </center>
+                </div>
+            </div>
+        </div>
+    
+    <script type="text/javascript">
+        var bt=document.getElementById("bt1");
+        var main=document.getElementById("main");
+        var see=document.getElementById("see");
+
+        var button=document.getElementById("button");
+
+        var info=function(x,y){   
+            user_handle1=x.value;
+            var display_area=document.getElementById(y);
+        
+            axios.get(`https://codeforces.com/api/user.info?handles=${user_handle1}`,{
+        }).then(function (response) {   //here response is the object that has json  
+        
+            x.value="";
+            display_area.innerText="";
+
+
+            var img= document.createElement('img');
+            img.setAttribute("src",`http:`+`${response.data.result[0].titlePhoto}`);
+            display_area.appendChild(img);
+            var div_inside=document.createElement("div");
+            var h1=document.createElement("h1");
+            h1.innerText=`Name: ${response.data.result[0].firstName} ${response.data.result[0].lastName}`;
+            display_area.appendChild(h1);
+            var h21=document.createElement("h2");
+            h21.innerText=`Country: ${response.data.result[0].country}`;
+            var h22=document.createElement("h2");
+            h22.innerText=`City: ${response.data.result[0].city}`;
+            var h23=document.createElement("h2");
+            h23.innerText=`rating: ${response.data.result[0].rating}`;
+            var h24=document.createElement("h2");
+            h24.innerText=`Handle: ${response.data.result[0].handle}`;
+            var h25=document.createElement("h2");
+            h25.innerText=`Organization: ${response.data.result[0].organization}`;
+            var h26=document.createElement("h2");
+            h26.innerText=`Rank: ${response.data.result[0].rank}`;
+            var h27=document.createElement("h2");
+            h27.innerText=`MaxRating: ${response.data.result[0].maxRating}`;
+            display_area.appendChild(h21);
+            display_area.appendChild(h22);
+            display_area.appendChild(h23);
+            display_area.appendChild(h24);
+            display_area.appendChild(h25);
+            display_area.appendChild(h26);
+            display_area.appendChild(h27);
+            display_area.style.marginTop="20px";
+    
+            
+            })
+            .catch(function (error) {
+               display_area.innerHTML="<h1>oopps no such user found!!!</h1><h1>try again!!</h1>";
+               x="";
+            })
+        }
+
+
+
+
+
+
+        var piechart=function(x,y)
+     {
+var c=0;
+		var d=0;
+		var e=0,a=0;
+		var f=0,g=0,h=0;
+		var l=0;
+		var k=0;
+        user_handle1=x.value;
+		
+		axios.get(`https://codeforces.com/api/user.status?handle=${user_handle1}`)
+		.then(function(response){
+			var i;
+			var o=response.data;
+			l=o.result.length;
+	for(i=0;i<o.result.length;i++)
+	{
+		if(o.result[i].verdict=="OK")
+		{
+			c++;
+			continue;
+		}
+		if(o.result[i].verdict=="WRONG_ANSWER")
+		{
+			d++;
+			continue;
+		}
+		if(o.result[i].verdict=="TIME_LIMIT_EXCEEDED")
+		{
+			e++;
+			continue;
+		}
+		if(o.result[i].verdict=="RUNTIME_ERROR")
+		{
+			f++;
+			continue;
+		}
+		if(o.result[i].verdict=="SKIPPED")
+		{
+			g++;
+			continue;
+		}
+		if(o.result[i].verdict=="MEMORY_LIMIT_EXCEEDED")
+		{
+			h++;
+			continue;
+		}
+		if(o.result[i].verdict=="COMPILATION_ERROR")
+		{
+			k++;
+		}
+		else{
+			a++;
+		}
+
+	}
+	c=(c/l)*100;
+	d=(d/l)*100;
+	e=(e/l)*100;
+	f=(f/l)*100;
+	g=(g/l)*100;
+	h=(h/l)*100;
+	a=(a/l)*100;
+	k=(k/l)*100;
+	Highcharts.chart(y, {
+chart: {
+	plotBackgroundColor: null,
+	plotBorderWidth: null,
+	plotShadow: false,
+	type: 'pie'
+},
+title: {
+	text: 'SUBMISSION STATUS'
+},
+tooltip: {
+	pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+},
+plotOptions: {
+	pie: {
+		allowPointSelect: true,
+		cursor: 'pointer',
+		dataLabels: {
+			enabled: true,
+			format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+			style: {
+				color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+			}
+		}
+	}
+},
+series: [{
+	name: 'SUBMISSIONS',
+	colorByPoint: true,
+	data: [{
+		name: 'TIME_LIMIT_EXCEEDED',
+		y: e,
+		sliced: true,
+		selected: true
+	}, {
+		name: 'SKIPPED',
+		y: g
+	}, {
+		name: 'MEMORY_LIMIT_EXCEEDED',
+		y: h
+	}, {
+		name: 'WRONG_ANSWER',
+		y: d
+	},
+	{
+		name: 'RUNTIME_ERROR',
+		y: f
+	},
+	{
+		name: 'OTHERS',
+		y: a
+	},
+	{
+		name: 'OK',
+		y: c
+	
+	},
+	{
+		name:'COMPILATION_ERROR',
+		y: k
+	}]
+}]
+});		
+})
+.catch(function(err){
+		console.log(err);
+	})
+     }
+
+
+    
+
+
+         
+        var func=function()
+        {
+            bt.style.visibility="hidden";
+            console.log("hello");
+            see.style.visibility="visible";
+            main.style.visibility="visible";
+
+        }
+
+
+        bt.addEventListener('click',func)
+
+
+
+
+    //event handler for click on button
+    button.addEventListener("click",function(event){
+        var input1=document.getElementById("u1");
+        var input2=document.getElementById("u2");
+        info(input1,"user1");
+        info(input2,"user2");
+        piechart(input1,"pie1");
+        piechart(input2,"pie2");
+        
+    });
+    
+
+    </script>
+
+</body>
+</html>

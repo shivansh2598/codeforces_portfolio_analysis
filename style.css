@@ -1,0 +1,30 @@
+#display_area
+{
+    height: auto;
+    margin-top:150px;
+    width:700px;
+    margin-bottom: 200px;
+}
+#user_name
+{
+     margin-left:620px;
+     text-align: center;
+     margin-top: 20px;
+     margin-bottom: 20px;
+     font-size: 20px;
+     
+}
+#button
+{
+    width: 80px;
+    height: 25px;
+}
+
+#includedContent
+{
+    margin-top: 50px;
+}
+body
+{
+    background-color: #E0FFFF;
+}
